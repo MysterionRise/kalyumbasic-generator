@@ -1,0 +1,15 @@
+{
+    "manifest_version": 1,
+
+    "name": "Anti Mayonnaise ",
+    "description": "This extension will try to limit your consumption of this dirty product",
+    "version": "0.1",
+
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "activeTab"
+    ]
+}
