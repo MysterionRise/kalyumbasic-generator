@@ -1,5 +1,5 @@
 {
-    "manifest_version": 1,
+    "manifest_version": 2,
 
     "name": "Anti Mayonnaise ",
     "description": "This extension will try to limit your consumption of this dirty product",
