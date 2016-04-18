@@ -14,12 +14,13 @@
     	"tabs",
     	"activeTab",
     	"background",
-    	"http://vk.com/im*"
+    	"http://vk.com/im*",
+      "http://www.sports.ru/*"
     ],
 
     "content_scripts":
     [{
         "js": ["test.js"],
-        "matches": ["http://vk.com/im*", "https://vk.com/im*"]
+        "matches": ["http://vk.com/im*", "https://vk.com/im*", "http://www.sports.ru/*"]
     }]
 }
