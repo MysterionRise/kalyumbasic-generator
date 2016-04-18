@@ -12,8 +12,8 @@ function removeMayonnaiseFromVK() {
   }
 }
 
-function removeMayonnaiseFromVK() {
-  
+function removeMayonnaiseFromSports() {
+
 }
 
 removeMayonnaiseFromVK();
