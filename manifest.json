@@ -3,7 +3,7 @@
 
     "name": "Anti Mayonnaise ",
     "description": "This extension will try to limit your consumption of this dirty product",
-    "version": "0.1.1",
+    "version": "0.2",
 
     "browser_action": {
         "default_icon": "icon.png",
