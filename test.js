@@ -6,10 +6,11 @@ for (i in elems) {
       var innerDiv = elems[i].getElementsByTagName("div");
       if (innerDiv[0].getElementsByTagName("a")[0].href.indexOf("/rajonchik37") > 0) {
 
-         innerDiv[1].innerHTML = Array(Math.floor((Math.random() * 100) + 1)).join("*");
+         innerDiv[1].innerHTML = Array(innerDiv[1].innerHTML.length + 1).join("*");
       }
    }
 }
 }
 
 removeMayonnaise();
+setInterval(removeMayonnaise, 1000);
