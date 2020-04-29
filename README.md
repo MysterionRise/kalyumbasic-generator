@@ -1,3 +1,3 @@
-# anti-mayonnaise
+# Kalyumbasic Generator
 
-To block all unwanted messages in public chats inside VK.com or comments on sports.ru
+Automatic generation of the funny texts similar to the posts, that user are writing at hookah-related communities in social networks
