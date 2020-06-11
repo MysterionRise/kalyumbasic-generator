@@ -3,12 +3,15 @@ import pandas as pd
 import numpy as np
 
 # Get raw text as string.
-data = pd.read_csv('data.csv')
+data1 = pd.read_csv('data.csv')
 
-data = data.replace(np.nan, '', regex=True)
+data1 = data1.replace(np.nan, '', regex=True)
 
-text = '\n'.join(data['text'].values.tolist())
+text = '\n'.join(data1['text'].values.tolist())
 text = text.replace(".", "\n")
+
+# with open("pii/data.csv", "r") as f:
+#     text = f.readlines()
 
 # Build the model.
 text_model = markovify.NewlineText(text)

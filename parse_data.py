@@ -9,7 +9,7 @@ if __name__ == "__main__":
     offset = 0
     records = []
     while nakur:
-        wall = vk_api.wall.get(v="5.00", domain="kalikfan", offset=offset, count=100)
+        wall = vk_api.wall.get(v="5.21", domain="kalikfan", offset=offset, count=100)
         if len(wall["items"]) != 100:
             nakur = False
         for item in wall["items"]:
