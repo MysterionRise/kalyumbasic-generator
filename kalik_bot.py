@@ -1,5 +1,6 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.ext.dispatcher import run_async
+import pickle
 
 
 @run_async
@@ -13,21 +14,22 @@ def help(update, context):
         """, parse_mode='HTML')
 
 
-prev_titles = set()
+with open('model.data', 'rb') as f:
+    text_model = pickle.load(f)
 
 
 @run_async
 def sendKalik(update, context):
     try:
         chat_id = update.message.chat.id
-        kalik_message = ''
+        kalik_message = text_model.make_sentence()
         print(kalik_message)
         msg = context.bot.send_message(chat_id, kalik_message, parse_mode='HTML')
     except Exception as e:
         print(e)
 
 
-def main(argv):
+def main():
     updater = Updater("", use_context=True)
 
     updater.dispatcher.add_handler(CommandHandler('help', help))
@@ -38,4 +40,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

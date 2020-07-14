@@ -1,7 +1,8 @@
 import vk
 import pandas as pd
 
-if __name__ == "__main__":
+
+def read_data(output_f: str):
     token = open('config.env', 'r').readline().strip()
     session = vk.Session(access_token=token)
     vk_api = vk.API(session)
@@ -17,6 +18,8 @@ if __name__ == "__main__":
         offset += 100
     print(len(records))
     df = pd.DataFrame(records, columns=['text'])
-    df.to_csv('data.csv')
+    df.to_csv(output_f)
 
 
+if __name__ == "__main__":
+    read_data('data.csv')

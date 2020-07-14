@@ -1,3 +1,5 @@
 config.env
 .idea
 pii
+venv
+model.data
