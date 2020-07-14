@@ -16,6 +16,10 @@ def generate_model():
     with open('model.data', 'wb') as f:
         pickle.dump(text_model, f)
 
+    with open('model.data', 'rb') as f:
+        model = pickle.load(f)
+    print(model.make_sentence())
+
 
 if __name__ == "__main__":
     generate_model()

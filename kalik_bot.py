@@ -1,6 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.ext.dispatcher import run_async
 import pickle
+import markovify
 
 
 @run_async
