@@ -11,7 +11,7 @@ def help(update, context):
         <b>Kalik Bot Commands:</b>
 
         /help - show this help
-        /sendKalik - send Kalik-based message
+        /kalik - send Kalik-based message
         """, parse_mode='HTML')
 
 
@@ -39,7 +39,7 @@ def sendKalik(update, context):
 
 
 def main():
-    updater = Updater("", use_context=True)
+    updater = Updater("1261701110:AAE4veDeEiYgQuia-GHrz__NpAuEYInUTns", use_context=True)
 
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_handler(CommandHandler('start', help))
