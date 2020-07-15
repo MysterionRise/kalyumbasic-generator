@@ -18,12 +18,14 @@ def help(update, context):
 with open('model.data', 'rb') as f:
     text_model = pickle.load(f)
 
+
 def make_sentence():
     sentence = None
     while sentence is None:
         sentence = text_model.make_sentence()
     
     return sentence
+
 
 @run_async
 def sendKalik(update, context):
