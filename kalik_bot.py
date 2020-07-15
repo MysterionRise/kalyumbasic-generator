@@ -18,12 +18,18 @@ def help(update, context):
 with open('model.data', 'rb') as f:
     text_model = pickle.load(f)
 
+def make_sentence():
+    sentence = None
+    while sentence is None:
+        sentence = text_model.make_sentence()
+    
+    return sentence
 
 @run_async
 def sendKalik(update, context):
     try:
         chat_id = update.message.chat.id
-        kalik_message = text_model.make_sentence()
+        kalik_message = make_sentence()
         print(kalik_message)
         msg = context.bot.send_message(chat_id, kalik_message, parse_mode='HTML')
     except Exception as e:
