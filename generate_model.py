@@ -4,6 +4,7 @@ import numpy as np
 import pickle
 import re
 
+
 def generate_source_text():
     data = pd.read_csv('data.csv')
     data.dropna(inplace=True)
