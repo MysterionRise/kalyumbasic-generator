@@ -1,8 +1,8 @@
 from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, InlineQueryHandler
+from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, PicklePersistence
 from telegram.ext.dispatcher import run_async
 import pickle
-import markovify
+import settings
 
 
 @run_async
@@ -14,10 +14,6 @@ def help(update, context):
         /help - show this help
         /kalik - send Kalik-based message
         """, parse_mode='HTML')
-
-
-with open('model.data', 'rb') as f:
-    text_model = pickle.load(f)
 
 
 def make_sentence():
@@ -47,37 +43,52 @@ def sendKalik(update, context):
         print(e)
 
 
-def inlinequery(update, context):
-    query = update.inline_query.query
-    results = [
-        InlineQueryResultArticle(
-            id=uuid4(),
-            title="Caps",
-            input_message_content=InputTextMessageContent(
-                query.upper())),
-        InlineQueryResultArticle(
-            id=uuid4(),
-            title="Bold",
-            input_message_content=InputTextMessageContent(
-                "*{}*".format(escape_markdown(query)),
-                parse_mode=ParseMode.MARKDOWN)),
-        InlineQueryResultArticle(
-            id=uuid4(),
-            title="Italic",
-            input_message_content=InputTextMessageContent(
-                "_{}_".format(escape_markdown(query)),
-                parse_mode=ParseMode.MARKDOWN))]
+def vote(update, context):
+    query = update.callback_query
+    msg_id = query.message.message_id
+    print(msg_id)
+    user_id = query.from_user.id
+    print(user_id)
 
-    update.inline_query.answer(results)
+    values = feedback.get(msg_id, {})
+    if query.data == 'like':
+        values[user_id] = 1
+    else:
+        values[user_id] = -1
+    feedback[msg_id] = values
+    query.answer()
+    print(feedback)
+
+
+def stop(signum, frame):
+    with open('feedback', 'wb') as f:
+        pickle.dump(feedback, f)
+
+
+def read_feedback():
+    global feedback
+    with open('feedback', 'rb') as f:
+        if f is not None:
+            feedback = pickle.load(f)
+        else:
+            feedback = {}
+
+
+def read_model():
+    global text_model
+    with open('model.data', 'rb') as f:
+        text_model = pickle.load(f)
 
 
 def main():
-    updater = Updater("1261701110:AAG27XYrDT5TYUn0Bq9z6HXKcQzZESjzJjQ", use_context=True)
+    read_feedback()
+    read_model()
 
+    updater = Updater(settings.AUTH_TOKEN, user_sig_handler=stop, use_context=True)
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_handler(CommandHandler('start', help))
     updater.dispatcher.add_handler(CommandHandler('kalik', sendKalik))
-    updater.dispatcher.add_handler(InlineQueryHandler(inlinequery))
+    updater.dispatcher.add_handler(CallbackQueryHandler(vote))
     updater.start_polling()
     updater.idle()
 

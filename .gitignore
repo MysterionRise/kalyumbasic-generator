@@ -3,3 +3,5 @@ config.env
 pii
 venv
 model.data
+settings.py
+feedback
