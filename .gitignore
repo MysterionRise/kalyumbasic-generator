@@ -5,3 +5,4 @@ venv
 model.data
 settings.py
 feedback
+__pycache__

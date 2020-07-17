@@ -3,6 +3,7 @@ from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQu
 from telegram.ext.dispatcher import run_async
 import pickle
 import settings
+import os.path
 
 
 @run_async
@@ -45,17 +46,19 @@ def sendKalik(update, context):
 
 def vote(update, context):
     query = update.callback_query
+    chat_id = query.message.chat.id
     msg_id = query.message.message_id
-    print(msg_id)
     user_id = query.from_user.id
-    print(user_id)
 
-    values = feedback.get(msg_id, {})
+    messages = feedback.get(chat_id, {})
+    values = messages.get(msg_id, {})
     if query.data == 'like':
         values[user_id] = 1
     else:
         values[user_id] = -1
-    feedback[msg_id] = values
+    messages[msg_id] = values
+    values['text'] = query.message.text
+    feedback[chat_id] = messages
     query.answer()
     print(feedback)
 
@@ -67,11 +70,11 @@ def stop(signum, frame):
 
 def read_feedback():
     global feedback
-    with open('feedback', 'rb') as f:
-        if f is not None:
+    if os.path.exists('feedback'):
+        with open('feedback', 'rb') as f:
             feedback = pickle.load(f)
-        else:
-            feedback = {}
+    else:
+        feedback = {}
 
 
 def read_model():
