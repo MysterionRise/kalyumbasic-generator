@@ -1,10 +1,11 @@
 import vk
 import pandas as pd
 
+import settings
+
 
 def read_data(output_f: str):
-    token = open('config.env', 'r').readline().strip()
-    session = vk.Session(access_token=token)
+    session = vk.Session(access_token=settings.VK_AUTH_TOKEN)
     vk_api = vk.API(session)
     nakur = True
     offset = 0
