@@ -22,7 +22,7 @@ def read_data(output_f: str):
         for item in wall["items"]:
             text = item["text"]
             # Skip ads
-            if "#калик_рекламик" in text:
+            if "#калик_рекламик" in text or "://" in text:
                 continue
             records.append(item["text"])
 
@@ -42,9 +42,10 @@ def read_data(output_f: str):
             # Add most popular comments
             for comment in post_comments[:3]:
                 comment_text = comment["text"]
-                # In case of answers to comment
-                if "[id" not in comment_text:
-                    records.append(comment_text)
+                # In case of answers to comment or links
+                if "[id" in comment_text or "://" in comment_text:
+                    continue
+                records.append(comment_text)
         offset += 100
     print(len(records))
     df = pd.DataFrame(records, columns=['text'])
