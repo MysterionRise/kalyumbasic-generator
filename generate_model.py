@@ -1,8 +1,8 @@
+import pickle
+import re
 import markovify
 import pandas as pd
 import numpy as np
-import pickle
-import re
 
 
 def generate_source_text():

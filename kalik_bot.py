@@ -1,13 +1,14 @@
-from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, PicklePersistence
-from telegram.ext.dispatcher import run_async
 import pickle
-import settings
 import os.path
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram.ext.dispatcher import run_async
+
+import settings
 
 
 @run_async
-def help(update, context):
+def bot_help(update, context):
     chat_id = update.message.chat.id
     context.bot.send_message(chat_id, text="""
         <b>Kalik Bot Commands:</b>
@@ -20,13 +21,13 @@ def help(update, context):
 def make_sentence():
     sentence = None
     while sentence is None:
-        sentence = text_model.make_sentence()
+        sentence = TEXT_MODEL.make_sentence()
 
     return sentence
 
 
 @run_async
-def sendKalik(update, context):
+def send_kalik(update, context):
     keyboard = [[InlineKeyboardButton("I like it!😊", callback_data='like'),
                  InlineKeyboardButton("It's crap😒", callback_data='dislike')]]
 
@@ -35,11 +36,11 @@ def sendKalik(update, context):
         chat_id = update.message.chat.id
         kalik_message = make_sentence()
         print(kalik_message)
-        msg = context.bot.send_message(chat_id,
-                                       kalik_message,
-                                       reply_markup=reply_markup,
-                                       parse_mode='HTML'
-                                       )
+        context.bot.send_message(chat_id,
+                                 kalik_message,
+                                 reply_markup=reply_markup,
+                                 parse_mode='HTML'
+                                 )
     except Exception as e:
         print(e)
 
@@ -78,9 +79,9 @@ def read_feedback():
 
 
 def read_model():
-    global text_model
+    global TEXT_MODEL
     with open('model.data', 'rb') as f:
-        text_model = pickle.load(f)
+        TEXT_MODEL = pickle.load(f)
 
 
 def main():
@@ -88,9 +89,9 @@ def main():
     read_model()
 
     updater = Updater(settings.AUTH_TOKEN, user_sig_handler=stop, use_context=True)
-    updater.dispatcher.add_handler(CommandHandler('help', help))
-    updater.dispatcher.add_handler(CommandHandler('start', help))
-    updater.dispatcher.add_handler(CommandHandler('kalik', sendKalik))
+    updater.dispatcher.add_handler(CommandHandler('help', bot_help))
+    updater.dispatcher.add_handler(CommandHandler('start', bot_help))
+    updater.dispatcher.add_handler(CommandHandler('kalik', send_kalik))
     updater.dispatcher.add_handler(CallbackQueryHandler(vote))
     updater.start_polling()
     updater.idle()
