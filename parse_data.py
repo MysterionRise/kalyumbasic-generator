@@ -13,7 +13,7 @@ LIKES_THRESHOLD = 10
 URL_REGEX = r"[a-zA-Z]+\.[a-zA-Z]+"
 
 
-def read_data(output_f: str):
+def scrap_data_from_source(output_f: str):
     vk_api = vk.API(vk.Session(access_token=settings.VK_AUTH_TOKEN))
     nakur = True
     offset = 0
@@ -62,4 +62,4 @@ def read_data(output_f: str):
 
 
 if __name__ == "__main__":
-    read_data(output_f='data.csv')
+    scrap_data_from_source(output_f='data.csv')
