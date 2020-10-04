@@ -26,12 +26,14 @@ from typing import List
 
 class BaseLM:
 
-    def __init__(self, n: int, vocab: List = None):
+    def __init__(self, n: int, k: int = 1, vocab: List = None):
         """Language model constructor
         n -- n-gram size
+        k -- for add-k smoothing
         vocab -- optional fixed vocabulary for the model
         """
         self.n = n
+        self.k = k
         self.vocab = vocab
         self.ngrams = {}
 
@@ -44,10 +46,8 @@ class BaseLM:
         """
         context_stats = self.ngrams.get(' '.join(context), {})
         total = len(context_stats)
-        print(context_stats)
-        print(word)
         count = context_stats.get(word, 0)
-        return count / total
+        return (count + self.k) / (total + (self.k * len(self.vocab)))
 
     def generate_text(self, text_length: int):
         """This method generates random text of length
@@ -69,7 +69,6 @@ class BaseLM:
         """
         for i in range(len(sequence_of_tokens) - self.n):
             seq = ' '.join(sequence_of_tokens[i:i + self.n])
-            # print(seq)
             if seq not in self.ngrams.keys():
                 self.ngrams[seq] = {}
             token = sequence_of_tokens[i + self.n]
@@ -85,5 +84,4 @@ class BaseLM:
         for i in range(0, len(sequence_of_tokens) - self.n):
             selected = sequence_of_tokens[i:i + self.n + 1]
             mul = mul * (1.0 / self.prob(selected[self.n], context=selected[:self.n]))
-            print()
-        return mul
+        return pow(mul, 1.0 / len(sequence_of_tokens))

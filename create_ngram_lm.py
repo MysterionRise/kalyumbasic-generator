@@ -44,6 +44,24 @@ def generate_sentences(df) -> List[str]:
     return all_sentences
 
 
+def generate_tokens_from_sentences(sentenses: List) -> List[str]:
+    res_tokens = []
+    for sent in sentenses:
+        res_tokens.extend(generate_tokens_from_sentence(sent))
+    return res_tokens
+
+
+def generate_tokens_from_sentence(sent) -> List[str]:
+    nlp = Russian()
+    tokens = []
+    doc = nlp(sent.text.lower())
+    for token in doc:
+        cleaned_token = normalise_and_cleanup(token.text)
+        if len(cleaned_token) > 0:
+            tokens.append(cleaned_token)
+    return tokens
+
+
 def train_test_validate_split(sentences: List[str], train_ratio: float = 0.8, validation_ratio: float = 0.1,
                               test_ratio: float = 0.1) -> Tuple[List[str], List[str], List[str]]:
     train, test = train_test_split(sentences, test_size=1 - train_ratio)
@@ -60,20 +78,18 @@ def train_test_validate_split(sentences: List[str], train_ratio: float = 0.8, va
 if __name__ == "__main__":
     df = pd.read_csv('data.csv')
     vocab = create_vocab_from_df(df)
-    uningram_model = BaseLM(1, list(vocab))
-    bigram_model = BaseLM(2, list(vocab))
-    trigram_model = BaseLM(3, list(vocab))
+    uningram_model = BaseLM(1, k=2, vocab=list(vocab))
+    bigram_model = BaseLM(2, k=2, vocab=list(vocab))
+    trigram_model = BaseLM(3, k=2, vocab=list(vocab))
     train, test, val = train_test_validate_split(generate_sentences(df))
     # train ngram model
-    nlp = Russian()
     for sent in train:
-        doc = nlp(sent.text.lower())
-        tokens = []
-        for token in doc:
-            cleaned_token = normalise_and_cleanup(token.text)
-            if len(cleaned_token) > 0:
-                tokens.append(cleaned_token)
+        tokens = generate_tokens_from_sentence(sent)
+        trigram_model.update(tokens)
         bigram_model.update(tokens)
+        uningram_model.update(tokens)
 
-    # print(bigram_model.ngrams)
-    print(bigram_model.perplexity(['чего', 'ты', 'сидишь', 'здесь']))
+    tokens = generate_tokens_from_sentences(val[0:5])
+    print(uningram_model.perplexity(tokens))
+    print(bigram_model.perplexity(tokens))
+    print(trigram_model.perplexity(tokens))
