@@ -22,6 +22,7 @@
 # Examples of texts generated with different models are present and compared
 # Optional: Try both character-based and word-based approaches.
 from typing import List
+import math
 
 
 class BaseLM:
@@ -79,9 +80,14 @@ class BaseLM:
 
         sequence_of_tokens -- iterable of tokens
         """
-        mul = 1.0
+        denom = 1.0
         sequence_of_tokens.append('</s>')
         for i in range(0, len(sequence_of_tokens) - self.n):
             selected = sequence_of_tokens[i:i + self.n + 1]
-            mul = mul * (1.0 / self.prob(selected[self.n], context=selected[:self.n]))
-        return pow(mul, 1.0 / len(sequence_of_tokens))
+            denom *= 1.0 / self.prob(selected[self.n], context=selected[:self.n])
+        print(denom)
+        return pow(1.0 / denom, 1.0 / len(sequence_of_tokens))
+#
+# PP = p1 * p2 * ... pN
+# log(p1) + log(p2) + ... + log(pN)
+#

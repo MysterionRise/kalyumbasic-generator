@@ -4,3 +4,4 @@ vk
 spacy
 pymorphy2
 sklearn
+tensorflow

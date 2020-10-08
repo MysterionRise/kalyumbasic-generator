@@ -89,7 +89,7 @@ if __name__ == "__main__":
         bigram_model.update(tokens)
         uningram_model.update(tokens)
 
-    tokens = generate_tokens_from_sentences(val[0:5])
+    tokens = generate_tokens_from_sentences(val[0:1])
     print(uningram_model.perplexity(tokens))
     print(bigram_model.perplexity(tokens))
     print(trigram_model.perplexity(tokens))
