@@ -9,15 +9,12 @@ from create_ngram_lm import create_vocab_from_df
 if __name__ == '__main__':
     lm = keras.Sequential(
         [
-            # word to vec
-            # keras.Input(shape=(16,)),
-            # layers.Dense(100, activation='softplus'),
-            # layers.Embedding(),
-            keras.Input(dtype=str),
-            # layers.Embedding(input_dim=16, output_dim=10),
+            keras.Input(shape=(300, 1)),
             layers.Dense(24, activation='softplus'),
             layers.Dense(100, activation='softplus'),
-            layers.Dense(8, activation='softmax')
+            layers.Dense(16, activation='softplus'),
+            layers.Dense(1, activation='softmax'),
+            layers.Softmax()
             # layers.Dense(21077, activation='softmax'),
         ],
         name="lm",
@@ -29,10 +26,10 @@ if __name__ == '__main__':
 
     metrics = keras.metrics.CategoricalAccuracy()
 
-    # x = tf.ones((1, 21077))
-    # y = lm(x)
+    x = tf.ones((1, 300))
+    y = lm(x)
     # print(y)
-    # print(lm.summary())
+    print(lm.summary())
 
     # df = pd.read_csv('data.csv')
     # vocab = create_vocab_from_df(df)
@@ -43,7 +40,7 @@ if __name__ == '__main__':
     #         train_bigrams.append(our_words[i] + our_words[j])
     #
     # print(train_bigrams)
-    X_train = np.random.random((100, 16))
+    X_train = np.array(['я', 'пошел', 'домой', '.', 'затем', 'я', 'принял', 'ванну'])
 
     # [я пошел]
     # X - [0 0 0 0 0 0 1] [0 0 0 0 0 0 1 0 0 0 0 0]
