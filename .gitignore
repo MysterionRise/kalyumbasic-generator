@@ -5,3 +5,5 @@ model.data
 settings.py
 feedback
 __pycache__
+/ru2/
+/models/

@@ -18,8 +18,15 @@ def pipe_add(n, names=['sentencizer']):
 nlp_ru = pipe_add(spacy.load('./ru2'), ['tagger', 'parser'])
 print("RU pipeline: {}".format(nlp_ru.pipe_names))
 
-token = nlp_ru('привет')[0]
-print('{}_{}'.format(token.lemma_, token.pos_))
+model = KeyedVectors.load_word2vec_format('models/ruwikiruscorpora_upos_skipgram_300_2_2019/model.bin', binary=True)
 
-model = KeyedVectors.load_word2vec_format('180/model.bin', binary=True)
-print(model['{}_{}'.format(token.lemma_, token.pos_)].shape)
+
+def get_vector_by_word(word: str):
+    print(word)
+    token = nlp_ru(word)
+    print(model['{}_{}'.format(token.lemma_, token.pos_)].shape)
+    return model['{}_{}'.format(token.lemma_, token.pos_)]
+
+
+if __name__ == '__main__':
+    get_vector_by_word("привет")
