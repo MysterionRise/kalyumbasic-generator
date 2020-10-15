@@ -1,8 +1,10 @@
 markovify
 pandas
 vk
-spacy
-pymorphy2
-sklearn
+scikit-learn
 tensorflow
 gensim
+nltk
+spacy
+pymorphy2
+pymorphy2-dicts-ru

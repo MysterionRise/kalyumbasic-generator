@@ -1,32 +1,59 @@
 from gensim.models import KeyedVectors
-import spacy
+import numpy as np
+from nltk import pos_tag, word_tokenize
+from spacy.lang.ru import Russian
+
+model = KeyedVectors.load_word2vec_format('models/ruscorpora_upos_cbow_300_20_2019/model.bin', binary=True)
+
+nlp = Russian()
+
+MAPPINGS = {
+    "A": "ADJ",
+    "A-PRO": "PRON",
+    "ADV": "ADV",
+    "ADV-PRO": "PRON",
+    "ANUM": "ADJ",
+    "CONJ": "CONJ",
+    "INTJ": "X",
+    "NONLEX": ".",
+    "NUM": "NUM",
+    "PARENTH": "PRT",
+    "PART": "PRT",
+    "PR": "ADP",
+    "PRAEDIC": "PRT",
+    "PRAEDIC-PRO": "PRON",
+    "S": "NOUN",
+    "S-PRO": "PRON",
+    "V": "VERB",
+}
 
 
-def pipe_add(n, names=['sentencizer']):
-    pos = 0
-    for x in names:
-        if not x in n.pipe_names:
-            if pos >= len(n.pipe_names):
-                n.add_pipe(n.create_pipe(x))
-                pos += 1
-            else:
-                n.add_pipe(n.create_pipe(x), before=n.pipe_names[pos])
-                pos += 1
-    return n
-
-
-nlp_ru = pipe_add(spacy.load('./ru2'), ['tagger', 'parser'])
-print("RU pipeline: {}".format(nlp_ru.pipe_names))
-
-model = KeyedVectors.load_word2vec_format('models/ruwikiruscorpora_upos_skipgram_300_2_2019/model.bin', binary=True)
+def lemmatization(text):
+    doc = nlp(text)
+    for token in doc:
+        print(token, token.lemma, token.lemma_)
+    tokens = [token.lemma_ for token in doc]
+    return " ".join(tokens)
 
 
 def get_vector_by_word(word: str):
-    print(word)
-    token = nlp_ru(word)
-    print(model['{}_{}'.format(token.lemma_, token.pos_)].shape)
-    return model['{}_{}'.format(token.lemma_, token.pos_)]
+    doc = nlp(word)
+    token = doc[0]
+    lemma = token.lemma_
+    pos = pos_tag(word_tokenize(lemma), lang='rus')[0][1]
+    converted_pos = MAPPINGS[pos]
+    key = '{}_{}'.format(lemma, converted_pos)
+    try:
+        value = model.get_vector(key)
+        return value
+    except KeyError:
+        print('{} not found in model'.format(key))
+    return np.ones((300, 1))
+
+
+def get_vector_by_words(*words: str):
+    return np.append(get_vector_by_word(words[0]), [get_vector_by_word(w) for w in words[1:]])
 
 
 if __name__ == '__main__':
-    get_vector_by_word("привет")
+    print(get_vector_by_words('я', 'пошел', 'домой').shape)

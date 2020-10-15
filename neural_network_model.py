@@ -1,15 +1,15 @@
-import tensorflow as tf
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
-import numpy as np
-import pandas as pd
-from word_embedding import get_vector_by_word
-from create_ngram_lm import create_vocab_from_df
+
+import word_embedding
+
+# from create_ngram_lm import create_vocab_from_df
 
 if __name__ == '__main__':
     lm = keras.Sequential(
         [
-            keras.Input(shape=(1, 300)),
+            keras.Input(shape=(1, 900)),
             layers.Dense(24, activation='softplus'),
             layers.Dense(100, activation='softplus'),
             layers.Dense(16, activation='softplus'),
@@ -25,11 +25,6 @@ if __name__ == '__main__':
 
     metrics = keras.metrics.CategoricalAccuracy()
 
-    x = tf.ones((1, 300))
-    y = lm(x)
-    print(y)
-    print(lm.summary())
-
     # df = pd.read_csv('data.csv')
     # vocab = create_vocab_from_df(df)
     # our_words = list(vocab)[1:10]
@@ -39,11 +34,12 @@ if __name__ == '__main__':
     #         train_bigrams.append(our_words[i] + our_words[j])
     #
     # print(train_bigrams)
-
-    X_train = np.array([get_vector_by_word('я'),
-                        get_vector_by_word('пошел'),
-                        get_vector_by_word('домой')])
-    print(X_train)
+    # x = [(i, i + 1, i + 2) for i in range(0, len(l)) if i + 2 <= len(l)]
+    [x for w in word_sentences ]
+    X = word_embedding.get_vector_by_words('я', 'пошел', 'домой')
+    print(X.shape)
+    X_train = X.reshape((900, 1)).T
+    print(X_train.shape)
     # [я пошел]
     # X - [0 0 0 0 0 0 1] [0 0 0 0 0 0 1 0 0 0 0 0]
 
@@ -60,9 +56,9 @@ if __name__ == '__main__':
     # домой </s>
     # <s> погода
 
-    Y_train = np.random.random((1,))
+    Y_train = np.random.random((1, 1))
     print(Y_train)
-
+    #
     lm.compile(optimizer=optimizer, loss=loss_function, metrics=[metrics])
-
+    #
     lm.fit(X_train, Y_train, batch_size=5, epochs=100)
