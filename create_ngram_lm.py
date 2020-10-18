@@ -27,6 +27,8 @@ def create_vocab_from_df(df) -> Set[str]:
         except AttributeError:
             print(row['text'])
 
+    vocab.add('<s>')
+    vocab.add('</s>')
     return vocab
 
 
@@ -55,10 +57,12 @@ def generate_tokens_from_sentence(sent) -> List[str]:
     nlp = Russian()
     tokens = []
     doc = nlp(sent.text.lower())
+    tokens.append('<s>')
     for token in doc:
         cleaned_token = normalise_and_cleanup(token.text)
         if len(cleaned_token) > 0:
             tokens.append(cleaned_token)
+    tokens.append('</s>')
     return tokens
 
 

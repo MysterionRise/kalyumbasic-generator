@@ -35,7 +35,8 @@ if __name__ == '__main__':
     #
     # print(train_bigrams)
     # x = [(i, i + 1, i + 2) for i in range(0, len(l)) if i + 2 <= len(l)]
-    [x for w in word_sentences ]
+    # [x for w in word_sentences ]
+
     X = word_embedding.get_vector_by_words('я', 'пошел', 'домой')
     print(X.shape)
     X_train = X.reshape((900, 1)).T

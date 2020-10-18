@@ -80,14 +80,11 @@ class BaseLM:
 
         sequence_of_tokens -- iterable of tokens
         """
-        denom = 1.0
+        sequence_of_tokens.insert(0, '<s>')
+        denom = 0.0
         sequence_of_tokens.append('</s>')
         for i in range(0, len(sequence_of_tokens) - self.n):
             selected = sequence_of_tokens[i:i + self.n + 1]
-            denom *= 1.0 / self.prob(selected[self.n], context=selected[:self.n])
-        print(denom)
-        return pow(1.0 / denom, 1.0 / len(sequence_of_tokens))
-#
-# PP = p1 * p2 * ... pN
-# log(p1) + log(p2) + ... + log(pN)
-#
+            denom += self.prob(selected[self.n], context=selected[:self.n])
+        return denom
+        # return pow(1.0 / math.exp(denom), 1.0 / len(sequence_of_tokens))
