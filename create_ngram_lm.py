@@ -97,3 +97,9 @@ if __name__ == "__main__":
     print(uningram_model.perplexity(tokens))
     print(bigram_model.perplexity(tokens))
     print(trigram_model.perplexity(tokens))
+
+    print(uningram_model.generate_text(10))
+    print(bigram_model.generate_text(10))
+    print(trigram_model.generate_text(10))
+
+

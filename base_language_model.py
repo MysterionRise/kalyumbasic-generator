@@ -21,6 +21,7 @@
 # Perplexity is calculated for both models
 # Examples of texts generated with different models are present and compared
 # Optional: Try both character-based and word-based approaches.
+import random
 from typing import List
 import math
 
@@ -58,7 +59,19 @@ class BaseLM:
         hello world
 
         """
-        raise NotImplementedError
+        result = ""
+        prev_context = ('<s>',)
+        for i in range(0, text_length):
+            distribution = [None] * len(self.vocab)
+            for pos, word in enumerate(self.vocab):
+                distribution[pos] = self.prob(word, context=prev_context)
+            choice = random.choices(self.vocab, distribution)[0]
+            result += choice
+            result += " "
+            l = list(prev_context)
+            l.append(choice)
+            prev_context = tuple(l)
+        return result
 
     def update(self, sequence_of_tokens: List[str]):
         """This method learns probabiities based on given sequence of tokens
