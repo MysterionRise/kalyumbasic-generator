@@ -7,3 +7,4 @@ feedback
 __pycache__
 /ru2/
 /models/
+/stanford-corenlp-4.1.0/

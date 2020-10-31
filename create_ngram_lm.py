@@ -85,10 +85,12 @@ if __name__ == "__main__":
     uningram_model = BaseLM(1, k=2, vocab=list(vocab))
     bigram_model = BaseLM(2, k=2, vocab=list(vocab))
     trigram_model = BaseLM(3, k=2, vocab=list(vocab))
+    fourgram_model = BaseLM(4, k=2, vocab=list(vocab))
     train, test, val = train_test_validate_split(generate_sentences(df))
     # train ngram model
     for sent in train:
         tokens = generate_tokens_from_sentence(sent)
+        fourgram_model.update(tokens)
         trigram_model.update(tokens)
         bigram_model.update(tokens)
         uningram_model.update(tokens)
@@ -97,9 +99,11 @@ if __name__ == "__main__":
     print(uningram_model.perplexity(tokens))
     print(bigram_model.perplexity(tokens))
     print(trigram_model.perplexity(tokens))
+    print(fourgram_model.perplexity(tokens))
 
     print(uningram_model.generate_text(10))
     print(bigram_model.generate_text(10))
     print(trigram_model.generate_text(10))
+    print(fourgram_model.generate_text(10))
 
 
