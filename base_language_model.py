@@ -42,12 +42,17 @@ class BaseLM:
     def prob(self, word: str, context=None):
         """This method returns probability of a word with given context: P(w_t | w_{t - 1}...w_{t - n + 1})
 
+
         For example:
         >>> lm.prob('hello', context=('world',))
+        hello
+            {world: 2}
+            {Denis: 1}
+
         0.99988
         """
         context_stats = self.ngrams.get(' '.join(context), {})
-        total = len(context_stats)
+        total = sum(x for _, x in context_stats.items())
         count = context_stats.get(word, 0)
         return (count + self.k) / (total + (self.k * len(self.vocab)))
 
@@ -56,21 +61,25 @@ class BaseLM:
 
         For example
         >>> lm.generate_text(2)
-        hello world
+        hello world X
 
         """
         result = ""
         prev_context = ('<s>',)
         for i in range(0, text_length):
-            distribution = [None] * len(self.vocab)
-            for pos, word in enumerate(self.vocab):
-                distribution[pos] = self.prob(word, context=prev_context)
-            choice = random.choices(self.vocab, distribution)[0]
+            distribution = [self.prob(word, context=prev_context) for word in self.vocab]
+            #     todo: change 5 to something different
+            zipped = sorted(zip(self.vocab, distribution), key=lambda w: -w[1])[0:10]
+            if zipped[0][1] < 1e-6:
+                return result
+            choice = random.choices([x[0] for x in zipped], [x[1] for x in zipped])[0]
+            if choice == '</s>':
+                return result
             result += choice
             result += " "
             l = list(prev_context)
             l.append(choice)
-            prev_context = tuple(l)
+            prev_context = tuple(l[-self.n:])
         return result
 
     def update(self, sequence_of_tokens: List[str]):
@@ -81,6 +90,7 @@ class BaseLM:
         For example
         >>> lm.update(['hello', 'world'])
         """
+        # todo vector
         for i in range(len(sequence_of_tokens) - self.n):
             seq = ' '.join(sequence_of_tokens[i:i + self.n])
             if seq not in self.ngrams.keys():

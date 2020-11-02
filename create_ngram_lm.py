@@ -66,8 +66,8 @@ def generate_tokens_from_sentence(sent) -> List[str]:
     return tokens
 
 
-def train_test_validate_split(sentences: List[str], train_ratio: float = 0.8, validation_ratio: float = 0.1,
-                              test_ratio: float = 0.1) -> Tuple[List[str], List[str], List[str]]:
+def train_test_validate_split(sentences: List[str], train_ratio: float = 0.9, validation_ratio: float = 0.05,
+                              test_ratio: float = 0.05) -> Tuple[List[str], List[str], List[str]]:
     train, test = train_test_split(sentences, test_size=1 - train_ratio)
 
     val, test = train_test_split(test, test_size=test_ratio / (test_ratio + validation_ratio))
@@ -82,28 +82,14 @@ def train_test_validate_split(sentences: List[str], train_ratio: float = 0.8, va
 if __name__ == "__main__":
     df = pd.read_csv('data.csv')
     vocab = create_vocab_from_df(df)
-    uningram_model = BaseLM(1, k=2, vocab=list(vocab))
-    bigram_model = BaseLM(2, k=2, vocab=list(vocab))
-    trigram_model = BaseLM(3, k=2, vocab=list(vocab))
-    fourgram_model = BaseLM(4, k=2, vocab=list(vocab))
+    uningram_model = BaseLM(1, k=0.001, vocab=list(vocab))
     train, test, val = train_test_validate_split(generate_sentences(df))
-    # train ngram model
     for sent in train:
         tokens = generate_tokens_from_sentence(sent)
-        fourgram_model.update(tokens)
-        trigram_model.update(tokens)
-        bigram_model.update(tokens)
         uningram_model.update(tokens)
 
     tokens = generate_tokens_from_sentences(val[0:1])
     print(uningram_model.perplexity(tokens))
-    print(bigram_model.perplexity(tokens))
-    print(trigram_model.perplexity(tokens))
-    print(fourgram_model.perplexity(tokens))
 
-    print(uningram_model.generate_text(10))
-    print(bigram_model.generate_text(10))
-    print(trigram_model.generate_text(10))
-    print(fourgram_model.generate_text(10))
-
-
+    for i in range(0, 10):
+        print(uningram_model.generate_text(20))

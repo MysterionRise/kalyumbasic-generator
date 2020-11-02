@@ -41,17 +41,18 @@ def get_vector_by_word(word: str):
     token = doc[0]
     lemma = token.lemma_
     pos = pos_tag(word_tokenize(lemma), lang='rus')[0][1]
-    converted_pos = MAPPINGS[pos]
-    key = '{}_{}'.format(lemma, converted_pos)
     try:
+        converted_pos = MAPPINGS.get(pos)
+        key = '{}_{}'.format(lemma, converted_pos)
         value = model.get_vector(key)
+        # print(value)
         return value
     except KeyError:
-        print('{} not found in model'.format(key))
-    return np.ones((300, 1))
+        print('{} or {} not found in model'.format(key, pos))
+    return np.ones((300,))
 
 
-def get_vector_by_words(*words: str):
+def get_vector_by_words(words):
     return np.append(get_vector_by_word(words[0]), [get_vector_by_word(w) for w in words[1:]])
 
 
