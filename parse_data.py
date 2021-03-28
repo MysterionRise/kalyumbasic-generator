@@ -6,7 +6,7 @@ import settings
 
 TEXT = "text"
 ITEMS = "items"
-API_VERSION = "5.21"
+API_VERSION = "5.130"
 GROUP_DOMAIN = "kalikfan"
 PARSE_COUNT = 100  # Count of posts/comments at request
 LIKES_THRESHOLD = 10
@@ -46,7 +46,7 @@ def scrap_data_from_source(output_f: str):
                 comments_offset += PARSE_COUNT
 
             # Filter and sort comments by likes count:
-            post_comments = [com for com in post_comments if com["likes"]["count"] > LIKES_THRESHOLD]
+            post_comments = [com for com in post_comments if "likes" in com and com["likes"]["count"] > LIKES_THRESHOLD]
             post_comments = sorted(post_comments, key=lambda k: k["likes"]["count"], reverse=True)
             # Add most popular comments
             for comment in post_comments[:5]:
