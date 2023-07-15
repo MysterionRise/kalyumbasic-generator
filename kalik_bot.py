@@ -1,3 +1,4 @@
+import logging
 import os.path
 import pickle
 
@@ -6,6 +7,28 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, Updater
 from telegram.ext.dispatcher import run_async
 
 import settings
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+
+feedback = {}
+TEXT_MODEL = None
+
+
+def read_feedback():
+    global feedback
+    if os.path.exists("feedback"):
+        with open("feedback", "rb") as f:
+            feedback = pickle.load(f)
+    else:
+        feedback = {}
+
+
+def read_model():
+    global TEXT_MODEL
+    with open("model.data", "rb") as f:
+        TEXT_MODEL = pickle.load(f)
 
 
 @run_async
@@ -27,7 +50,6 @@ def make_sentence():
     sentence = None
     while sentence is None:
         sentence = TEXT_MODEL.make_sentence()
-
     return sentence
 
 
@@ -39,17 +61,16 @@ def send_kalik(update, context):
             InlineKeyboardButton("It's crap😒", callback_data="dislike"),
         ]
     ]
-
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         chat_id = update.message.chat.id
         kalik_message = make_sentence()
-        print(kalik_message)
+        logging.info(kalik_message)
         context.bot.send_message(
             chat_id, kalik_message, reply_markup=reply_markup, parse_mode="HTML"
         )
     except Exception as e:
-        print(e)
+        logging.error(e)
 
 
 def vote(update, context):
@@ -68,27 +89,12 @@ def vote(update, context):
     values["text"] = query.message.text
     feedback[chat_id] = messages
     query.answer()
-    print(feedback)
+    logging.info(feedback)
 
 
 def stop(signum, frame):
     with open("feedback", "wb") as f:
         pickle.dump(feedback, f)
-
-
-def read_feedback():
-    global feedback
-    if os.path.exists("feedback"):
-        with open("feedback", "rb") as f:
-            feedback = pickle.load(f)
-    else:
-        feedback = {}
-
-
-def read_model():
-    global TEXT_MODEL
-    with open("model.data", "rb") as f:
-        TEXT_MODEL = pickle.load(f)
 
 
 def main():
