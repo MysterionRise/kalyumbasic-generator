@@ -2,9 +2,9 @@ import logging
 import os.path
 import pickle
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler, CommandHandler, Updater
-from telegram.ext.dispatcher import run_async
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (Application, ApplicationBuilder,
+                          CallbackQueryHandler, CommandHandler, ContextTypes)
 
 import settings
 
@@ -31,10 +31,9 @@ def read_model():
         TEXT_MODEL = pickle.load(f)
 
 
-@run_async
-def bot_help(update, context):
+async def bot_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat.id
-    context.bot.send_message(
+    await context.bot.send_message(
         chat_id,
         text="""
         <b>Kalik Bot Commands:</b>
@@ -53,8 +52,7 @@ def make_sentence():
     return sentence
 
 
-@run_async
-def send_kalik(update, context):
+async def send_kalik(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton("I like it!😊", callback_data="like"),
@@ -66,14 +64,14 @@ def send_kalik(update, context):
         chat_id = update.message.chat.id
         kalik_message = make_sentence()
         logging.info(kalik_message)
-        context.bot.send_message(
+        await context.bot.send_message(
             chat_id, kalik_message, reply_markup=reply_markup, parse_mode="HTML"
         )
     except Exception as e:
         logging.error(e)
 
 
-def vote(update, context):
+async def vote(update, context):
     query = update.callback_query
     chat_id = query.message.chat.id
     msg_id = query.message.message_id
@@ -88,26 +86,36 @@ def vote(update, context):
     messages[msg_id] = values
     values["text"] = query.message.text
     feedback[chat_id] = messages
-    query.answer()
+    await query.answer()
     logging.info(feedback)
 
 
-def stop(signum, frame):
+async def post_stop(application: Application) -> None:
     with open("feedback", "wb") as f:
         pickle.dump(feedback, f)
+    logging.info("Shutting down...")
 
 
 def main():
     read_feedback()
     read_model()
 
-    updater = Updater(settings.AUTH_TOKEN, user_sig_handler=stop, use_context=True)
-    updater.dispatcher.add_handler(CommandHandler("help", bot_help))
-    updater.dispatcher.add_handler(CommandHandler("start", bot_help))
-    updater.dispatcher.add_handler(CommandHandler("kalik", send_kalik))
-    updater.dispatcher.add_handler(CallbackQueryHandler(vote))
-    updater.start_polling()
-    updater.idle()
+    application = (
+        ApplicationBuilder().token(settings.AUTH_TOKEN).post_stop(post_stop).build()
+    )
+
+    start_handler = CommandHandler("start", bot_help)
+    application.add_handler(start_handler)
+
+    help_handler = CommandHandler("help", bot_help)
+    application.add_handler(help_handler)
+
+    kalik_handler = CommandHandler("kalik", send_kalik)
+    application.add_handler(kalik_handler)
+
+    application.add_handler(CallbackQueryHandler(vote))
+
+    application.run_polling()
 
 
 if __name__ == "__main__":
