@@ -71,7 +71,7 @@ async def send_kalik(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logging.error(e)
 
 
-async def vote(update, context):
+async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     chat_id = query.message.chat.id
     msg_id = query.message.message_id
