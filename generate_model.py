@@ -21,7 +21,9 @@ def generate_source_text(data_path):
     split_lines = [line.splitlines() for line in data["text"].values.tolist()]
     lines = np.concatenate(split_lines)
     lines = [re.sub(r"\\[.+\\]", "", line) for line in lines]
-    lines = [re.sub(f"^({BAD_CHARS})+|({BAD_CHARS})+$", "", line) for line in lines]
+    lines = [
+        re.sub(f"^({BAD_CHARS})+|({BAD_CHARS})+$", "", line) for line in lines
+    ]
     lines = [line[0].lower() + line[1:] for line in lines if line.strip()]
 
     return "\n".join(lines)

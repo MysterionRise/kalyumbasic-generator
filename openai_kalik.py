@@ -16,7 +16,9 @@ def generate_messages(filename):
             yield SystemMessage(content=row["text"])
 
 
-chat = ChatOpenAI(model_name="gpt-4", openai_api_key=openai_api_key, temperature=0.5)
+chat = ChatOpenAI(
+    model_name="gpt-4", openai_api_key=openai_api_key, temperature=0.5
+)
 
 # Use itertools.islice to get the first 20 messages from the generator
 generated_messages = list(itertools.islice(generate_messages("data.csv"), 20))

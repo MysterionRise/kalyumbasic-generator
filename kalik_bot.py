@@ -3,13 +3,19 @@ import os.path
 import pickle
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import (Application, ApplicationBuilder,
-                          CallbackQueryHandler, CommandHandler, ContextTypes)
+from telegram.ext import (
+    Application,
+    ApplicationBuilder,
+    CallbackQueryHandler,
+    CommandHandler,
+    ContextTypes,
+)
 
 import settings
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
 )
 
 feedback = {}
@@ -65,7 +71,10 @@ async def send_kalik(update: Update, context: ContextTypes.DEFAULT_TYPE):
         kalik_message = make_sentence()
         logging.info(kalik_message)
         await context.bot.send_message(
-            chat_id, kalik_message, reply_markup=reply_markup, parse_mode="HTML"
+            chat_id,
+            kalik_message,
+            reply_markup=reply_markup,
+            parse_mode="HTML",
         )
     except Exception as e:
         logging.error(e)
@@ -101,7 +110,10 @@ def main():
     read_model()
 
     application = (
-        ApplicationBuilder().token(settings.AUTH_TOKEN).post_stop(post_stop).build()
+        ApplicationBuilder()
+        .token(settings.AUTH_TOKEN)
+        .post_stop(post_stop)
+        .build()
     )
 
     start_handler = CommandHandler("start", bot_help)
