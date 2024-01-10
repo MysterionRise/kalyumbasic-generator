@@ -23,11 +23,7 @@ def get_group_id(vk_api):
 
 
 def filter_ads(text):
-    return (
-        "#калик_рекламик" not in text
-        and "://" not in text
-        and not re.search(URL_REGEX, text)
-    )
+    return "#калик_рекламик" not in text and "://" not in text and not re.search(URL_REGEX, text)
 
 
 def scrap_data_from_source(output_f: str):
@@ -40,7 +36,10 @@ def scrap_data_from_source(output_f: str):
 
     while is_data_remaining:
         wall = vk_api.wall.get(
-            v=API_VERSION, domain=GROUP_DOMAIN, offset=offset, count=PARSE_COUNT
+            v=API_VERSION,
+            domain=GROUP_DOMAIN,
+            offset=offset,
+            count=PARSE_COUNT,
         )
         if len(wall[ITEMS]) != PARSE_COUNT:
             is_data_remaining = False
