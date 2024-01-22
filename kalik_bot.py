@@ -3,13 +3,7 @@ import os.path
 import pickle
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import (
-    Application,
-    ApplicationBuilder,
-    CallbackQueryHandler,
-    CommandHandler,
-    ContextTypes,
-)
+from telegram.ext import Application, ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes
 
 import settings
 
@@ -109,12 +103,7 @@ def main():
     read_feedback()
     read_model()
 
-    application = (
-        ApplicationBuilder()
-        .token(settings.AUTH_TOKEN)
-        .post_stop(post_stop)
-        .build()
-    )
+    application = ApplicationBuilder().token(settings.AUTH_TOKEN).post_stop(post_stop).build()
 
     start_handler = CommandHandler("start", bot_help)
     application.add_handler(start_handler)

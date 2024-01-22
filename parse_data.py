@@ -23,11 +23,7 @@ def get_group_id(vk_api):
 
 
 def filter_ads(text):
-    return (
-        "#калик_рекламик" not in text
-        and "://" not in text
-        and not re.search(URL_REGEX, text)
-    )
+    return "#калик_рекламик" not in text and "://" not in text and not re.search(URL_REGEX, text)
 
 
 def scrap_data_from_source(output_f: str):
