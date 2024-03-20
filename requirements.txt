@@ -1,6 +1,6 @@
 anyio==3.7.1
 APScheduler==3.6.3
-black==22.1.0
+black==24.3.0
 cachetools==4.2.2
 certifi==2023.7.22
 charset-normalizer==2.0.11
